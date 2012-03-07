@@ -76,6 +76,7 @@ class stock_warehouse_transfer(osv.osv_memory):
             values['location_src_id'] = report.location_id.id
             values['product_id'] = report.product_id.id
             values['uom_id'] = report.uom_id.id
+            # FIXME : The product_qty is in (750.0,) by example instead of float ?
             #values['product_uom_qty'] = report.product_qty,
             values['prodlot_id'] = report.prodlot_id.id
             values['tracking_id'] = report.tracking_id.id
