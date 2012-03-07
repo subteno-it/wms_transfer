@@ -29,10 +29,15 @@
     'description': """Wizard for transfer product in stock in other warehouse""",
     'author': 'SYLEAM',
     'website': 'http://www.syleam.fr/',
-    'depends': [],
+    'depends': [
+        'base',
+        'wms',
+    ],
     'init_xml': [],
     'images': [],
     'update_xml': [
+        'wizard/warehouse_transfer_view.xml',
+        'wms_view.xml',
         #'security/groups.xml',
         #'security/ir.model.access.csv',
         #'wizard/wizard.xml',
