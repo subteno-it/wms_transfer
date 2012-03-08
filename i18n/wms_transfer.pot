@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 6.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2012-03-07 17:56+0000\n"
-"PO-Revision-Date: 2012-03-07 17:56+0000\n"
+"POT-Creation-Date: 2012-03-08 08:56+0000\n"
+"PO-Revision-Date: 2012-03-08 08:56+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,12 @@ msgid "Warehouse transfer"
 msgstr ""
 
 #. module: wms_transfer
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:170
+#, python-format
+msgid "Please fill the quantity to transfer!"
+msgstr ""
+
+#. module: wms_transfer
 #: field:wizard.stock.warehouse.transfer,tracking_id:0
 msgid "Tracking"
 msgstr ""
@@ -38,6 +44,11 @@ msgstr ""
 #. module: wms_transfer
 #: help:wizard.stock.warehouse.transfer,location_src_id:0
 msgid "Location source where find the product available"
+msgstr ""
+
+#. module: wms_transfer
+#: help:wizard.stock.warehouse.transfer,uom_id:0
+msgid "Unit for this transfer"
 msgstr ""
 
 #. module: wms_transfer
@@ -57,8 +68,10 @@ msgid "Product"
 msgstr ""
 
 #. module: wms_transfer
-#: view:wms.report.stock.available:0
-msgid "Adjust Receiption"
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:166
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:169
+#, python-format
+msgid "Error !"
 msgstr ""
 
 #. module: wms_transfer
@@ -72,7 +85,8 @@ msgid "Company"
 msgstr ""
 
 #. module: wms_transfer
-#: code:addons/wms_transfer/wizard/warehouse_transfer.py:107
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:98
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:142
 #: view:wizard.stock.warehouse.transfer:0
 #, python-format
 msgid "Warehouse Transfer"
@@ -99,8 +113,19 @@ msgid "Warehouse Source"
 msgstr ""
 
 #. module: wms_transfer
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:167
+#, python-format
+msgid "The warehouses source and destination must be different!"
+msgstr ""
+
+#. module: wms_transfer
 #: help:wizard.stock.warehouse.transfer,product_uom_qty:0
 msgid "Quantity to transfer"
+msgstr ""
+
+#. module: wms_transfer
+#: field:wizard.stock.warehouse.transfer,last_transfer:0
+msgid "Last Product to Transfer"
 msgstr ""
 
 #. module: wms_transfer
@@ -139,8 +164,8 @@ msgid "Location Source"
 msgstr ""
 
 #. module: wms_transfer
-#: help:wizard.stock.warehouse.transfer,uom_id:0
-msgid "Unit for this transfer"
+#: help:wizard.stock.warehouse.transfer,last_transfer:0
+msgid "Indicate it last product to transfer."
 msgstr ""
 
 #. module: wms_transfer

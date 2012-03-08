@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 6.0.3\n"
 "Report-Msgid-Bugs-To: support@openerp.com\n"
-"POT-Creation-Date: 2012-03-07 17:57+0000\n"
-"PO-Revision-Date: 2012-03-07 17:57+0000\n"
+"POT-Creation-Date: 2012-03-08 08:56+0000\n"
+"PO-Revision-Date: 2012-03-08 08:56+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,12 @@ msgid "Warehouse transfer"
 msgstr "Transfert inter-entrepôts"
 
 #. module: wms_transfer
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:170
+#, python-format
+msgid "Please fill the quantity to transfer!"
+msgstr "La quantité à transférer n'a pas été saisie."
+
+#. module: wms_transfer
 #: field:wizard.stock.warehouse.transfer,tracking_id:0
 msgid "Tracking"
 msgstr "Colis"
@@ -39,6 +45,11 @@ msgstr "Colis"
 #: help:wizard.stock.warehouse.transfer,location_src_id:0
 msgid "Location source where find the product available"
 msgstr "Emplacement où se trouve le produit."
+
+#. module: wms_transfer
+#: help:wizard.stock.warehouse.transfer,uom_id:0
+msgid "Unit for this transfer"
+msgstr "Unité pour ce transfert"
 
 #. module: wms_transfer
 #: model:ir.model,name:wms_transfer.model_wizard_stock_warehouse_transfer
@@ -57,6 +68,13 @@ msgid "Product"
 msgstr "Produit"
 
 #. module: wms_transfer
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:166
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:169
+#, python-format
+msgid "Error !"
+msgstr "Erreur !"
+
+#. module: wms_transfer
 #: view:wizard.stock.warehouse.transfer:0
 msgid "Quantities"
 msgstr "Quantités"
@@ -67,7 +85,8 @@ msgid "Company"
 msgstr "Société"
 
 #. module: wms_transfer
-#: code:addons/wms_transfer/wizard/warehouse_transfer.py:107
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:98
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:142
 #: view:wizard.stock.warehouse.transfer:0
 #, python-format
 msgid "Warehouse Transfer"
@@ -94,9 +113,20 @@ msgid "Warehouse Source"
 msgstr "Entrepôt de départ"
 
 #. module: wms_transfer
+#: code:addons/wms_transfer/wizard/warehouse_transfer.py:167
+#, python-format
+msgid "The warehouses source and destination must be different!"
+msgstr "Les entrepôts source and destination doivent être différent."
+
+#. module: wms_transfer
 #: help:wizard.stock.warehouse.transfer,product_uom_qty:0
 msgid "Quantity to transfer"
 msgstr "Quantité à transférer"
+
+#. module: wms_transfer
+#: field:wizard.stock.warehouse.transfer,last_transfer:0
+msgid "Last Product to Transfer"
+msgstr "Dernier produit à transférer."
 
 #. module: wms_transfer
 #: help:wizard.stock.warehouse.transfer,warehouse_src_id:0
@@ -134,9 +164,9 @@ msgid "Location Source"
 msgstr "Emplacement de départ"
 
 #. module: wms_transfer
-#: help:wizard.stock.warehouse.transfer,uom_id:0
-msgid "Unit for this transfer"
-msgstr "Unité pour ce transfert"
+#: help:wizard.stock.warehouse.transfer,last_transfer:0
+msgid "Indicate it last product to transfer."
+msgstr "Indicate it last product to transfer."
 
 #. module: wms_transfer
 #: view:wizard.stock.warehouse.transfer:0

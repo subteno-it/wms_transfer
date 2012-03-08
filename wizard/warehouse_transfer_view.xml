@@ -47,6 +47,7 @@
                     <separator string="Others" colspan="4"/>
                     <field name="product_packaging_id" domain="[('product_id','=', product_id)]"/>
                     <field name="date_expected"/>
+                    <field name="last_transfer"/>
                     <group colspan="4" col="6">
                         <button icon="gtk-cancel" special="cancel" string="Cancel"/>
                         <button icon="gtk-ok" string="Validate" name="validate" type="object"/>

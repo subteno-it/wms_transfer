@@ -28,6 +28,7 @@ from osv import fields
 import decimal_precision as dp
 from tools.translate import _
 import time
+import netsvc
 
 
 class stock_warehouse_transfer(osv.osv_memory):
@@ -48,11 +49,13 @@ class stock_warehouse_transfer(osv.osv_memory):
         'date_expected': fields.datetime('Date Expected', help='Date of receive product.'),
         'product_packaging_id': fields.many2one('product.packaging', 'Packaging', help='Packaging of product'),
         'company_id': fields.many2one('res.company', 'Company', required=False),
+        'last_transfer': fields.boolean('Last Product to Transfer', help='Indicate it last product to transfer.'),
     }
 
     _defaults = {
         'company_id': lambda s, cr, uid, c: s.pool.get('res.company')._company_default_get(cr, uid, 'wizard.stock.warehouse.transfer', context=c),
         'date_expected': lambda *a: time.strftime('%Y-%m-%d %H:%M:%S'),
+        'last_transfer': False,
     }
 
     def default_get(self, cr, uid, fields_list, context=None):
@@ -86,6 +89,69 @@ class stock_warehouse_transfer(osv.osv_memory):
 
         return values
 
+    def _prepare_picking(self, cr, uid, wizard, address_id, context=None):
+        """
+        @param wizard : browse of wizard
+        @param address_id : id of partner address
+        """
+        return {
+            'name': _('Warehouse Transfer'),
+            'type': 'internal',
+            'state': 'draft',
+            'move_type': 'one',
+            'address_id': address_id,
+            'invoice_state': 'none',
+            'company_id': wizard.warehouse_src_id.company_id.id,
+        }
+
+    def _prepare_move(self, cr, uid, wizard, address_id, picking_id, context=None):
+        """
+        @param wizard : browse of wizard
+        @param address_id : id of partner address
+        @param picking_id : id of picking
+        """
+        product_obj = self.pool.get('product.product')
+        return {
+            'name': product_obj.name_get(cr, uid, [wizard.product_id.id], context=context)[0][1],
+            'picking_id': picking_id,
+            'product_id': wizard.product_id.id,
+            'date': wizard.date_expected,
+            'date_expected': wizard.date_expected,
+            'product_qty': wizard.product_uom_qty,
+            'product_uom': wizard.uom_id.id,
+            'product_uos_qty': wizard.product_uom_qty,
+            'product_uos': wizard.uom_id.id,
+            'product_packaging': wizard.product_packaging_id.id and wizard.product_packaging_id.id or False,
+            'address_id': address_id,
+            'location_id': wizard.location_src_id.id,
+            'location_dest_id': wizard.location_dest_id.id,
+            'tracking_id': wizard.tracking_id and wizard.tracking_id.id or False,
+            'prodlot_id': wizard.prodlot_id and wizard.prodlot_id.id or False,
+            'state': 'draft',
+            'company_id': wizard.company_id.id,
+        }
+
+    def _prepare_procurement(self, cr, uid, wizard, move_id, context=None):
+        """
+        @param wizard : browse of wizard
+        @param move_id : id of move
+        """
+        product_obj = self.pool.get('product.product')
+        return {
+            'name': product_obj.name_get(cr, uid, [wizard.product_id.id], context=context)[0][1],
+            'origin': _('Warehouse Transfer'),
+            'date_planned': wizard.date_expected,
+            'product_id': wizard.product_id.id,
+            'product_qty': wizard.product_uom_qty,
+            'product_uom': wizard.uom_id.id,
+            'product_uos_qty': wizard.product_uom_qty,
+            'product_uos': wizard.uom_id.id,
+            'location_id': wizard.location_src_id.id,
+            'procure_method': 'make_to_order',
+            'move_id': move_id,
+            'company_id': wizard.company_id.id,
+        }
+
     def validate(self, cr, uid, ids, context=None):
         """
         Modify moves quantities
@@ -93,7 +159,15 @@ class stock_warehouse_transfer(osv.osv_memory):
         move_obj = self.pool.get('stock.move')
         pick_obj = self.pool.get('stock.picking')
         product_obj = self.pool.get('product.product')
+        proc_obj = self.pool.get('procurement.order')
+        wf_service = netsvc.LocalService("workflow")
         for wizard in self.browse(cr, uid, ids, context=context):
+            if wizard.warehouse_src_id == wizard.warehouse_dest_id:
+                raise osv.except_osv(_('Error !'),
+                        _("The warehouses source and destination must be different!"))
+            if not wizard.product_uom_qty:
+                raise osv.except_osv(_('Error !'),
+                        _("Please fill the quantity to transfer!"))
             picking_ids = pick_obj.search(cr, uid, [
                 ('state', '=', 'draft'),
                 ('user_id', '=', uid)
@@ -104,35 +178,12 @@ class stock_warehouse_transfer(osv.osv_memory):
             if picking_ids:
                 picking_id = picking_ids[0]
             else:
-                picking_id = pick_obj.create(cr, uid, {
-                    'name': _('Warehouse Transfer'),
-                    'type': 'internal',
-                    'state': 'draft',
-                    'move_type': 'one',
-                    'address_id': address_id,
-                    'invoice_state': 'none',
-                    'company_id': wizard.warehouse_src_id.company_id.id,
-                })
-            move_obj.create(cr, uid, {
-                'name': product_obj.name_get(cr, uid, [wizard.product_id.id], context=context)[0][1],
-                'picking_id': picking_id,
-                'product_id': wizard.product_id.id,
-                'date': wizard.date_expected,
-                'date_expected': wizard.date_expected,
-                'product_qty': wizard.product_uom_qty,
-                'product_uom': wizard.uom_id.id,
-                'product_uos_qty': wizard.product_uom_qty,
-                'product_uos': wizard.uom_id.id,
-                'product_packaging': wizard.product_packaging_id.id and wizard.product_packaging_id.id or False,
-                'address_id': address_id,
-                'location_id': wizard.location_src_id.id,
-                'location_dest_id': wizard.location_dest_id.id,
-                'tracking_id': wizard.tracking_id and wizard.tracking_id.id or False,
-                'prodlot_id': wizard.prodlot_id and wizard.prodlot_id.id or False,
-                'state': 'draft',
-                'company_id': wizard.company_id.id,
-
-            }, context=context)
+                picking_id = pick_obj.create(cr, uid, self._prepare_picking(cr, uid, wizard, address_id, context=context), context=context)
+            move_id = move_obj.create(cr, uid, self._prepare_move(cr, uid, wizard, address_id, picking_id, context=context), context=context)
+            proc_id = proc_obj.create(cr, uid, self._prepare_procurement(cr, uid, wizard, move_id, context=context), context=context)
+            if wizard.last_transfer:
+                wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_confirm', cr)
+                wf_service.trg_validate(uid, 'procurement.order', proc_id, 'button_confirm', cr)
         return {}
 
 stock_warehouse_transfer()
