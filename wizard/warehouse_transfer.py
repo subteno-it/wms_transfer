@@ -75,17 +75,18 @@ class stock_warehouse_transfer(osv.osv_memory):
             report = report_obj.browse(cr, uid, report_id, context=context)
 
             # Initialize values
-            values['warehouse_src_id'] = report.warehouse_id.id
-            values['location_src_id'] = report.location_id.id
-            values['product_id'] = report.product_id.id
-            values['uom_id'] = report.uom_id.id
-            # FIXME : The product_qty is in (750.0,) by example instead of float ?
-            #values['product_uom_qty'] = report.product_qty,
-            values['prodlot_id'] = report.prodlot_id.id
-            values['tracking_id'] = report.tracking_id.id
-            values['product_packaging_id'] = report.product_id.packaging \
+            values.update({
+                'warehouse_src_id': report.warehouse_id.id,
+                'location_src_id': report.location_id.id,
+                'product_id': report.product_id.id,
+                'uom_id': report.uom_id.id,
+                'product_uom_qty': report.product_qty,
+                'prodlot_id': report.prodlot_id.id,
+                'tracking_id': report.tracking_id.id,
+                'product_packaging_id': report.product_id.packaging \
                     and len(report.product_id.packaging) == 1 \
-                    and report.product_id.packaging[0].id or False
+                    and report.product_id.packaging[0].id or False,
+            })
 
         return values
 
