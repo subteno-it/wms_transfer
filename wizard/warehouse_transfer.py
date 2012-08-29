@@ -65,7 +65,6 @@ class stock_warehouse_transfer(osv.osv_memory):
         if context is None:
             context = {}
         report_obj = self.pool.get('wms.report.stock.available')
-
         # Call to super for standard behaviour
         values = super(stock_warehouse_transfer, self).default_get(cr, uid, fields_list, context=context)
 
@@ -163,9 +162,6 @@ class stock_warehouse_transfer(osv.osv_memory):
         proc_obj = self.pool.get('procurement.order')
         wf_service = netsvc.LocalService("workflow")
         for wizard in self.browse(cr, uid, ids, context=context):
-            if wizard.warehouse_src_id == wizard.warehouse_dest_id:
-                raise osv.except_osv(_('Error !'),
-                        _("The warehouses source and destination must be different!"))
             if not wizard.product_uom_qty:
                 raise osv.except_osv(_('Error !'),
                         _("Please fill the quantity to transfer!"))
