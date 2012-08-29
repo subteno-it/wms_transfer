@@ -167,7 +167,7 @@ class stock_warehouse_transfer(osv.osv_memory):
                         _("Please fill the quantity to transfer!"))
             picking_ids = pick_obj.search(cr, uid, [
                 ('state', '=', 'draft'),
-                ('user_id', '=', uid)
+                #('user_id', '=', uid)
             ], context=context)
             address_id = wizard.location_dest_id.address_id and wizard.location_dest_id.address_id.id \
                     or wizard.warehouse_dest_id.partner_address_id and wizard.warehouse_dest_id.partner_address_id.id \
