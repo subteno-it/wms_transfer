@@ -80,7 +80,7 @@ class stock_warehouse_transfer(osv.osv_memory):
                 'location_src_id': report.location_id.id,
                 'product_id': report.product_id.id,
                 'uom_id': report.uom_id.id,
-                'product_uom_qty': report.product_qty,
+                'product_uom_qty': report.qty,
                 'prodlot_id': report.prodlot_id.id,
                 'tracking_id': report.tracking_id.id,
                 'product_packaging_id': report.product_id.packaging \
