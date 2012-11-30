@@ -64,7 +64,6 @@ class stock_warehouse_transfer(osv.osv_memory):
         """
         if context is None:
             context = {}
-        report_obj = self.pool.get('wms.report.stock.available')
 
         # Call to super for standard behaviour
         values = super(stock_warehouse_transfer, self).default_get(cr, uid, fields_list, context=context)
@@ -72,6 +71,10 @@ class stock_warehouse_transfer(osv.osv_memory):
         # Retrieve current stock move from context
         if 'active_id' in context and context.get('active_id', False):
             report_id = context['active_id']
+            if 'active_model' in context and context.get('active_model', False):
+                report_obj = self.pool.get(context['active_model'])
+            else:
+                report_obj = self.pool.get('wms.report.stock.available')
             report = report_obj.browse(cr, uid, report_id, context=context)
 
             # Initialize values
@@ -122,7 +125,7 @@ class stock_warehouse_transfer(osv.osv_memory):
             'product_uom': wizard.uom_id.id,
             'product_uos_qty': wizard.product_uom_qty,
             'product_uos': wizard.uom_id.id,
-            'product_packaging': wizard.product_packaging_id.id and wizard.product_packaging_id.id or False,
+            'product_packaging': wizard.product_packaging_id and wizard.product_packaging_id.id or False,
             'address_id': address_id,
             'location_id': wizard.location_src_id.id,
             'location_dest_id': wizard.location_dest_id.id,
